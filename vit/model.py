@@ -27,16 +27,16 @@ class ViT(nn.Module):
         self.linear_proj = nn.Linear(3 * patch_size * patch_size, d_model)
         self.class_token = nn.Parameter(torch.randn(1, 1, d_model))
         self.max_seq_len = N 
-        self.pe = nn.Embedding(self.max_seq_len, d_model) # +1 for class token
+        self.pe = nn.Embedding(self.max_seq_len, d_model) 
         self.encoders = nn.Sequential(
             *[Encoder(d_model, num_heads) for _ in range(num_layers)]
         )
         self.ln = nn.LayerNorm(d_model)
         self.fc = nn.Linear(d_model, n_classes)
     
-    def forward(self, x: torch.Tensor) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, get_logits:bool=False) -> torch.Tensor:
+        x = self.patch_layer(x).transpose(1, 2).contiguous()
         x = self.linear_proj(x)
-        x = self.patch_layer(x)
         B, T, C = x.shape
 
         if T > self.max_seq_len:
@@ -52,5 +52,7 @@ class ViT(nn.Module):
         x = self.encoders(x)
         x = self.ln(x)
         x = self.fc(x)
-        return x
-
+        if get_logits:
+            return x
+        return x[:, 0, :]
+    
