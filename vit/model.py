@@ -3,9 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 from typing import Tuple
 from .modules import Encoder
+from huggingface_hub import PyTorchModelHubMixin
 
 
-class ViT(nn.Module):
+class ViT(
+    nn.Module, 
+    PyTorchModelHubMixin,
+    ):
     def __init__(self, 
             n_classes:int,
             patch_size:int, 
@@ -48,7 +52,7 @@ class ViT(nn.Module):
             pe = self.pe(torch.arange(T, device=x.device))
 
         x += pe
-        x = torch.cat([self.class_token, x], dim=1)
+        x = torch.cat([self.class_token.repeat(B, 1, 1), x], dim=1)
         x = self.encoders(x)
         x = self.ln(x)
         x = self.fc(x)
