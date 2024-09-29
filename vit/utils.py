@@ -40,6 +40,9 @@ class DataLoader:
         data = data.reshape(-1, 3, 32, 32)
         self.data = torch.from_numpy(data).float()
         self.labels = torch.tensor(labels)
+
+        test_filename = 'cifar-10-batches-py/test_batch'
+        self.test_data, self.test_labels = get_batch(test_filename)
     
     def get_batch(self, batch_size:int = 8, overfit:bool = False):
         if overfit:
@@ -47,3 +50,7 @@ class DataLoader:
             return self.data[idx], self.labels[idx]
         idx = torch.randint(0, len(self.data), (batch_size,))
         return self.data[idx], self.labels[idx]
+    
+    def get_test_batch(self, batch_size:int = 8):
+        idx = torch.randint(0, len(self.test_data), (batch_size,))
+        return self.test_data[idx], self.test_labels[idx]
