@@ -163,3 +163,4 @@ cython_debug/
 
 ViT.ipynb
 cifar*
+.DS_Store
