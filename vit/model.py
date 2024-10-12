@@ -55,8 +55,8 @@ class ViT(
         x = torch.cat([self.class_token.repeat(B, 1, 1), x], dim=1)
         x = self.encoders(x)
         x = self.ln(x)
-        x = self.fc(x)
         if get_logits:
             return x
-        return x[:, 0, :]
+        clf = self.fc(x[:, 0, :])
+        return clf
     
