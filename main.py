@@ -35,6 +35,12 @@ val_losses = []
 num_parameters = sum(p.numel() for p in m.parameters() if p.requires_grad)
 print(f"Number of parameters: {num_parameters}")
 
+version = 'v1' # version of the model
+try:
+    create_branch('ViT-cifar10', branch = version, token=os.environ['hf_token'])
+except:
+    pass
+
 previous_val_avg = 0
 pb = tqdm(range(steps))
 for step in pb:

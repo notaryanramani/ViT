@@ -3,10 +3,10 @@ Implementation of "An Image is Worth 16x16 Words" paper
 ![Vit](https://viso.ai/wp-content/uploads/2021/09/vision-transformer-vit.png)
 
 ## Contents
-- [1. What is ViT?](#1-what-is-vit)
-- [2. Dataset Used](#2-dataset-used)
-- [3. The Training Script](#3-the-training-script)
-- [4. Contribution](#4-contribution)
+- [What is ViT?](#1-what-is-vit)
+- [Dataset Used](#2-dataset-used)
+- [The Training Script](#3-the-training-script)
+- [Contribution](#4-contribution)
 
 ---
 
@@ -25,7 +25,7 @@ You can read the original ViT paper [here](https://arxiv.org/abs/2010.11929). Th
 ---
 
 ## 2. Dataset Used
-### V1
+### Version 1
 The **CIFAR-10** dataset is used to train the ViT model in this project. CIFAR-10 is a popular benchmark dataset for image classification tasks and contains 60,000 color images of size 32x32 pixels, divided into 10 different classes (airplane, automobile, bird, cat, deer, dog, frog, horse, ship, truck).
 
 ### Dataset Features:
