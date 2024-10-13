@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import Tuple
+from typing import Tuple, Union
 from .modules import Encoder
 from huggingface_hub import PyTorchModelHubMixin
 
@@ -10,16 +10,40 @@ class ViT(
     nn.Module, 
     PyTorchModelHubMixin,
     ):
+    """
+    Vision Transformer model for Classification tasks.
+
+    Args:
+        n_classes: int
+            Number of classes in the classification task.
+
+        patch_size: int
+            Size of the patches in the image.
+
+        img_size: Union[int, Tuple[int, int]]
+            Size of the input image.
+
+        d_model: int, default=512
+            Dimension of the model.
+
+        num_layers: int, default=6
+            Number of encoder layers.
+
+        num_heads: int, default=8
+            Number of attention heads.
+    """
     def __init__(self, 
             n_classes:int,
             patch_size:int, 
-            img_size:Tuple[int, int],
+            img_size: Union[int, Tuple[int, int]],
             d_model:int = 512,
             num_layers:int = 6,
             num_heads:int = 8,
             ) -> None:
         super().__init__()
 
+        if isinstance(img_size, int):
+            img_size = (img_size, img_size)
         H, W = img_size
         assert (H * W) % (patch_size ** 2) == 0, f"We cannot make equal patches with {patch_size=} and {img_size=}"
         N = H * W // patch_size**2
@@ -60,3 +84,10 @@ class ViT(
         clf = self.fc(x[:, 0, :])
         return clf
     
+    def predict(self, x: torch.Tensor) -> torch.Tensor: 
+        probs = self(x, get_logits=False)
+        return torch.argmax(probs, dim=-1)
+
+    def predict_proba(self, x: torch.Tensor) -> torch.Tensor: 
+        probs = F.softmax(self(x, get_logits=True), dim=-1)
+        return probs
