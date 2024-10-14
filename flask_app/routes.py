@@ -1,28 +1,18 @@
-from flask import Flask, request, jsonify
-from vit import ViT
-import torch
 from typing import Any
+
+from flask import Flask, request, jsonify
+import torch
 from PIL import Image
 
+from vit import ViT
+from vit.utils import _process_image
+
 app = Flask(__name__)
-model = ViT.from_pretrained('notaryanramani/ViT-cifar10')
+model = ViT.from_pretrained(
+    'notaryanramani/ViT-cifar10', # loads the latest model from main branch
+    revision = 'main', # use branch name here to change the model version
+) 
 
-def _process_image(image: Any) -> torch.Tensor:
-    """
-        Process the image to the correct shape and size.
-
-        Args:
-            image: Any
-                Image to be processed.
-            
-        Returns:
-            image: torch.Tensor
-                Processed image.
-    """
-    image = Image.open(image).convert('RGB')
-    image = image.resize(model.img_size)
-    image = torch.tensor(image).permute(2, 0, 1).unsqueeze(0)
-    return image
 
 # dummy endpoint
 @app.route('/api/dummy', methods=['POST'])
@@ -39,7 +29,7 @@ def predict():
 # endpoint to predict class
 @app.route('/api/predict', methods=['POST'])
 def predict():
-    """
+    """ 
         Endpoint to predict the class of an image.
     """
     image = request.files['image']
